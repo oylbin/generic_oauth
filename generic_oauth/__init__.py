@@ -1,9 +1,9 @@
 import random
 import string
 import webbrowser
-import urlparse
+import urllib.parse as urlparse
 import requests
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 class OAuthWebFlowController():
     
@@ -21,8 +21,10 @@ class OAuthWebFlowController():
             _self.send_response(200)
             _self.send_header("Content-type", "text/plain")
             _self.end_headers()
-            _self.wfile.write("Code: %s" % code)
-            _self.wfile.close()
+            s = "Code: %s" % code
+            _self.wfile.write(s.encode())
+            # do not close wfile to avoid "ValueError: I/O operation on closed file."
+            #_self.wfile.close()
 
     def __init__(self, client_id, client_secret, redirect_uri, scope, port=5555):
         self.state = self.random_state(16)
